@@ -1,0 +1,17 @@
+{
+    "name": "Gym Tracker Sebastian's",
+    "short_name": "GymTracker",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#0b0b15",
+    "theme_color": "#00f0ff",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "images/icon.svg",
+            "sizes": "192x192 512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}

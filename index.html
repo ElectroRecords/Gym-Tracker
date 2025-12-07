@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Tracker Sebastian's</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0b0b15">
+    <link rel="icon" type="image/svg+xml" href="images/icon.svg">
+</head>
+
+<body>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <h1 class="app-title">Gym Tracker Sebastian's</h1>
+            <p class="app-credits">Elaborado por Sebastian Andrade</p>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+            <span class="theme-icon">🌙</span>
+        </button>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <button class="nav-btn active" data-section="routine">
+            <span class="nav-icon">📋</span>
+            <span class="nav-label">Rutina</span>
+        </button>
+        <button class="nav-btn" data-section="logger">
+            <span class="nav-icon">💪</span>
+            <span class="nav-label">Entrenar</span>
+        </button>
+        <button class="nav-btn" data-section="history">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Historial</span>
+        </button>
+        <button class="nav-btn" data-section="charts">
+            <span class="nav-icon">📈</span>
+            <span class="nav-label">Progreso</span>
+        </button>
+        <button class="nav-btn" data-section="dashboard">
+            <span class="nav-icon">🏆</span>
+            <span class="nav-label">Dashboard</span>
+        </button>
+        <button class="nav-btn" data-section="profile">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label">Perfil</span>
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Routine Section -->
+        <section id="routine-section" class="content-section active">
+            <h2 class="section-title">Rutina Full Body 4 Días</h2>
+            <div id="routine-container"></div>
+        </section>
+
+        <!-- Logger Section -->
+        <section id="logger-section" class="content-section">
+            <h2 class="section-title">Registrar Entrenamiento</h2>
+            <div class="logger-controls">
+                <label for="training-day-select">Selecciona el día:</label>
+                <select id="training-day-select" class="select-input">
+                    <option value="">-- Selecciona un día --</option>
+                    <option value="martes">Martes - Cuádriceps + Empuje</option>
+                    <option value="miercoles">Miércoles - Isquios + Tracción</option>
+                    <option value="viernes">Viernes - Mix Híbrido</option>
+                    <option value="sabado">Sábado - Glúteo + Detalles</option>
+                </select>
+            </div>
+            <div id="logger-container"></div>
+        </section>
+
+        <!-- History Section -->
+        <section id="history-section" class="content-section">
+            <h2 class="section-title">Historial de Entrenamientos</h2>
+            <div class="history-controls">
+                <select id="history-day-filter" class="select-input">
+                    <option value="all">Todos los días</option>
+                    <option value="martes">Martes</option>
+                    <option value="miercoles">Miércoles</option>
+                    <option value="viernes">Viernes</option>
+                    <option value="sabado">Sábado</option>
+                </select>
+                <select id="history-exercise-filter" class="select-input">
+                    <option value="all">Todos los ejercicios</option>
+                </select>
+            </div>
+            <div id="history-container"></div>
+        </section>
+
+        <!-- Charts Section -->
+        <section id="charts-section" class="content-section">
+            <h2 class="section-title">Gráficas de Progreso</h2>
+            <div class="charts-controls">
+                <select id="chart-exercise-select" class="select-input">
+                    <option value="">-- Selecciona un ejercicio --</option>
+                </select>
+            </div>
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h3>Progreso de Peso</h3>
+                    <canvas id="weight-chart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>Progreso de Repeticiones</h3>
+                    <canvas id="reps-chart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard-section" class="content-section">
+            <h2 class="section-title">Dashboard</h2>
+            <div class="dashboard-grid">
+                <div class="dashboard-card stats-card">
+                    <h3>Estadísticas</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">Racha Actual:</span>
+                        <span class="stat-value" id="current-streak">0 días</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Mejor Racha:</span>
+                        <span class="stat-value" id="best-streak">0 días</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Entrenamientos:</span>
+                        <span class="stat-value" id="total-workouts">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Este Mes:</span>
+                        <span class="stat-value" id="month-workouts">0</span>
+                    </div>
+                </div>
+                <div class="dashboard-card calendar-card">
+                    <h3>Calendario de Entrenamientos</h3>
+                    <div class="calendar-controls">
+                        <button id="prev-month" class="calendar-btn">←</button>
+                        <span id="current-month"></span>
+                        <button id="next-month" class="calendar-btn">→</button>
+                    </div>
+                    <div id="calendar-grid"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profile-section" class="content-section">
+            <h2 class="section-title">Perfil</h2>
+            <div class="profile-container">
+                <div class="profile-card">
+                    <div class="profile-avatar">
+                        <span class="avatar-text">SA</span>
+                    </div>
+                    <div class="profile-info">
+                        <h3 id="profile-name">Sebastian Andrade</h3>
+                        <p id="profile-programa">Rutina Full Body 4 Días</p>
+                    </div>
+                </div>
+                <div class="profile-details">
+                    <div class="detail-item">
+                        <label for="profile-weight">Peso Corporal (kg):</label>
+                        <input type="number" id="profile-weight" class="input-field" min="0" step="0.1"
+                            placeholder="70">
+                    </div>
+                    <div class="detail-item">
+                        <label for="profile-height">Altura (cm):</label>
+                        <input type="number" id="profile-height" class="input-field" min="0" step="1" placeholder="175">
+                    </div>
+                    <div class="detail-item">
+                        <label for="profile-goal">Objetivo:</label>
+                        <select id="profile-goal" class="select-input">
+                            <option value="strength">Ganar Fuerza</option>
+                            <option value="muscle">Ganar Músculo</option>
+                            <option value="endurance">Resistencia</option>
+                            <option value="general">Fitness General</option>
+                        </select>
+                    </div>
+                    <button id="save-profile" class="btn-primary">Guardar Perfil</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Rest Timer Modal -->
+    <div id="rest-timer-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Tiempo de Descanso</h3>
+                <button id="close-timer" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="timer-display">
+                    <span id="timer-minutes">00</span>:<span id="timer-seconds">00</span>
+                </div>
+                <div class="timer-controls">
+                    <button id="timer-60" class="timer-preset-btn">60s</button>
+                    <button id="timer-90" class="timer-preset-btn">90s</button>
+                    <button id="timer-120" class="timer-preset-btn">2min</button>
+                    <button id="timer-180" class="timer-preset-btn">3min</button>
+                </div>
+                <div class="timer-actions">
+                    <button id="timer-start" class="btn-primary">Iniciar</button>
+                    <button id="timer-pause" class="btn-secondary">Pausar</button>
+                    <button id="timer-reset" class="btn-secondary">Reiniciar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/storage.js"></script>
+    <script src="js/workout.js"></script>
+    <script src="js/logger.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/calendar.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
